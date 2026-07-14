@@ -1,0 +1,28 @@
+name: Update prices
+
+on:
+  schedule:
+    - cron: "17 3,15 * * *" # twice a day
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  prices:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Generate prices.json
+        run: python3 scripts/generate_prices.py
+
+      - name: Publish to single-commit prices branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git checkout --orphan prices-tmp
+          git rm -rf --cached . >/dev/null
+          git add -f prices.json
+          git commit -m "Update prices"
+          git push -f origin HEAD:prices

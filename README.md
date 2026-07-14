@@ -1,19 +1,24 @@
 # csfolio-data
 
-CS2 item database for the [CS2Folio](https://csfolio.carrd.co) iOS app.
+CS2 item database and price feed for the [CS2Folio](https://csfolio.carrd.co) iOS app.
 
+**`main` branch** (item database, refreshed weekly by GitHub Actions):
 - `items.json` — sorted array of Steam market hash names
 - `images.json` — market hash name → Steam CDN image URL
 
-The app checks these files once a day and refreshes its local copy when they
-change, so new CS2 items reach users without an App Store update.
+**`prices` branch** (CSFloat price snapshot, refreshed twice daily, kept as a
+single commit so history stays small):
+- `prices.json` — market hash name → lowest CSFloat buy-now price in USD
 
-## Updating after a new CS2 drop
+The app checks these files periodically and refreshes its local copies when
+they change, so new items and prices reach users without App Store updates.
+
+Both datasets can also be regenerated manually:
 
 ```
 python3 scripts/generate_items.py
-git add -A && git commit -m "Update item database" && git push
+python3 scripts/generate_prices.py
 ```
 
-Data is generated from the community-maintained
-[ByMykel/CSGO-API](https://github.com/ByMykel/CSGO-API) dataset.
+Sources: [ByMykel/CSGO-API](https://github.com/ByMykel/CSGO-API) (items) and
+[csgotrader.app](https://csgotrader.app) (CSFloat prices).
