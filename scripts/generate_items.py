@@ -47,14 +47,17 @@ for source in SOURCES:
         n = e.get("market_hash_name") or e.get("name")
         img = e.get("image")
         add(n, img)
-        # StatTrak / Souvenir variants only exist on skin entries.
+        # StatTrak / Souvenir variants only exist on skin entries. Some source
+        # entries already carry the prefix in market_hash_name while also
+        # setting the flag — prefixing those again produced bogus names like
+        # "Souvenir Souvenir AWP | ...", so skip when it's already present.
         if source == "skins_not_grouped":
-            if e.get("stattrak"):
+            if e.get("stattrak") and "StatTrak™" not in n:
                 if n.startswith("★ "):
                     add("★ StatTrak™ " + n[2:], img)
                 else:
                     add("StatTrak™ " + n, img)
-            if e.get("souvenir"):
+            if e.get("souvenir") and not n.startswith("Souvenir "):
                 add("Souvenir " + n, img)
 
 items = sorted(out.keys())
